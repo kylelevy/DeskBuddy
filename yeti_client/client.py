@@ -71,6 +71,9 @@ class YetiClient:
     def _post(self, path: str, fields: Mapping[str, Any] | None = None) -> Any:
         return self._request("POST", path, data=_form_fields(fields or {}))
 
+    def _post_json(self, path: str, payload: Mapping[str, Any]) -> Any:
+        return self._request("POST", path, json=dict(payload))
+
     def status(self) -> dict[str, Any]:
         """Return the full device, hardware, mood, and system status."""
         return self._get("/api/status")
@@ -82,6 +85,10 @@ class YetiClient:
     def scan_i2c(self) -> list[I2CDevice]:
         """Scan the device I2C bus."""
         return [I2CDevice.from_dict(item) for item in self._get("/api/i2c")]
+
+    def notify(self, title: str, body: str) -> dict[str, Any]:
+        """Display a custom Wi-Fi notification with a scrolling body."""
+        return self._post_json("/api/notification", {"title": title, "body": body})
 
     def mood(self) -> dict[str, Any]:
         return self._get("/api/mood")

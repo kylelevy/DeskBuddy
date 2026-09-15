@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import pytest
 
@@ -18,6 +20,18 @@ def test_status_and_form_encoding():
 
     with make_client(handler) as yeti:
         assert yeti.set_mood("happy", 2500)["mood"]["currentMood"] == "happy"
+
+
+def test_custom_notification_uses_json_payload():
+    def handler(request):
+        assert request.url.path == "/api/notification"
+        assert request.method == "POST"
+        assert request.headers["content-type"] == "application/json"
+        assert json.loads(request.content) == {"title": "Hello", "body": "A long message"}
+        return httpx.Response(200, json={"ok": True, "durationMs": 2500})
+
+    with make_client(handler) as yeti:
+        assert yeti.notify("Hello", "A long message")["durationMs"] == 2500
 
 
 def test_models_from_device_endpoints():

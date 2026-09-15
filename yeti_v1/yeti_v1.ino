@@ -15,6 +15,8 @@
 
 // =====================================================
 
+// Desk Buddy v.1.1 - Custom Notifications API
+
 // YETI v.1 - The baseline of the new age of Kyle
 
 // NEW ERA!
@@ -240,7 +242,7 @@ const unsigned long YETI_LOOP_IDLE_DELAY_MS = 1;
 // =====================================================
 
 const char *APP_NAME = "Yeti";
-const char *APP_VERSION = "1.7.4-sleep-preview-compile-fix";
+const char *APP_VERSION = "1.1";
 const char *DEFAULT_HOSTNAME = "yeti";
 const uint8_t YETI_HOSTNAME_MAX_LEN = 31;
 String configuredHostname = DEFAULT_HOSTNAME;
@@ -279,6 +281,7 @@ const uint32_t YETI_WEATHER_UPDATE_MIN_MS = 300000;      // 5 minutes; polite to
 const uint32_t YETI_WEATHER_UPDATE_MAX_MS = 21600000;    // 6 hours.
 
 const uint32_t YETI_INFO_CARD_DEFAULT_MS = 60000;  // OLED clock/weather card interval.
+const uint16_t YETI_NOTIFICATION_MAX_TEXT_LEN = 512;
 const uint32_t YETI_INFO_CARD_MIN_MS = 10000;
 const uint32_t YETI_INFO_CARD_MAX_MS = 3600000;
 const uint32_t YETI_INFO_CARD_DURATION_MS = 6500;
@@ -780,7 +783,8 @@ enum OledOverlayMode {
   OLED_OVERLAY_STATUS,
   OLED_OVERLAY_CLOCK_SEQUENCE,
   OLED_OVERLAY_WEATHER_TICKER,
-  OLED_OVERLAY_SASS_TICKER
+  OLED_OVERLAY_SASS_TICKER,
+  OLED_OVERLAY_NOTIFICATION_TICKER
 };
 
 bool oledOverlayActive = false;
@@ -790,6 +794,7 @@ unsigned long oledOverlayUntil = 0;
 unsigned long lastOverlayDraw = 0;
 String oledTickerText = "";
 uint16_t oledTickerTextWidth = 0;
+String oledNotificationTitle = "";
 
 // Demo mode: a harmless little expression carousel for testing the face.
 bool demoMode = false;
@@ -1019,6 +1024,7 @@ String moodAutomationSummary();
 String moodSafetySummary();
 void drawClockSequenceOverlay();
 void drawWeatherTickerOverlay();
+void drawNotificationTickerOverlay();
 void updateOledOverlay();
 void initFaceEngine();
 void updateFaceEngine();
@@ -1178,6 +1184,7 @@ void handleApiSassClear();
 void handleApiMoodWeatherNow();
 void handleApiMoodWifiNow();
 void handleApiMoodMovementNow();
+void handleApiNotificationPost();
 void handleApiSequencePost();
 void handleApiSequenceStop();
 
@@ -1507,7 +1514,10 @@ bool jsonFindString(const String &json, const String &key, String &out) {
     char c = json.charAt(index++);
 
     if (escape) {
-      value += c;
+      if (c == 'n') value += '\n';
+      else if (c == 'r') value += '\r';
+      else if (c == 't') value += '\t';
+      else value += c;
       escape = false;
       continue;
     }
@@ -1986,6 +1996,34 @@ void drawWeatherTickerOverlay() {
   display.display();
 }
 
+void drawNotificationTickerOverlay() {
+  if (!oledReady || oledTickerText.length() == 0) {
+    return;
+  }
+
+  unsigned long now = millis();
+  if (lastOverlayDraw != 0 && now - lastOverlayDraw < YETI_WEATHER_TICKER_STEP_MS) {
+    return;
+  }
+  lastOverlayDraw = now;
+
+  uint32_t travel = SCREEN_WIDTH + oledTickerTextWidth + 24;
+  uint32_t offset = (((now - oledOverlayStarted) / YETI_WEATHER_TICKER_STEP_MS) * YETI_WEATHER_TICKER_PX_PER_STEP) % travel;
+  int16_t x = SCREEN_WIDTH - (int16_t)offset;
+
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+  display.setCursor(0, 0);
+  display.print(clipText(oledNotificationTitle, 21));
+  display.drawLine(0, 10, 127, 10, SSD1306_WHITE);
+  display.setTextSize(2);
+  display.setTextWrap(false);
+  display.setCursor(x, 24);
+  display.print(oledTickerText);
+  display.display();
+}
+
 void drawSassTickerOverlay() {
   if (!oledReady || oledTickerText.length() == 0) {
     return;
@@ -2035,6 +2073,8 @@ void updateOledOverlay() {
     drawWeatherTickerOverlay();
   } else if (oledOverlayMode == OLED_OVERLAY_SASS_TICKER) {
     drawSassTickerOverlay();
+  } else if (oledOverlayMode == OLED_OVERLAY_NOTIFICATION_TICKER) {
+    drawNotificationTickerOverlay();
   }
 }
 
@@ -3078,6 +3118,7 @@ const char *oledOverlayModeName(OledOverlayMode mode) {
     case OLED_OVERLAY_CLOCK_SEQUENCE: return "clock_sequence";
     case OLED_OVERLAY_WEATHER_TICKER: return "weather_ticker";
     case OLED_OVERLAY_SASS_TICKER: return "sass_ticker";
+    case OLED_OVERLAY_NOTIFICATION_TICKER: return "notification_ticker";
     default: return "unknown";
   }
 }
@@ -3089,6 +3130,7 @@ String oledOverlayModeLabel(OledOverlayMode mode) {
     case OLED_OVERLAY_CLOCK_SEQUENCE: return "Clock / Date Ticker";
     case OLED_OVERLAY_WEATHER_TICKER: return "Weather Ticker";
     case OLED_OVERLAY_SASS_TICKER: return "Sass Ticker";
+    case OLED_OVERLAY_NOTIFICATION_TICKER: return "Notification Ticker";
     default: return "Unknown";
   }
 }
@@ -5671,6 +5713,7 @@ void stopOledOverlay() {
   oledOverlayMode = OLED_OVERLAY_NONE;
   oledTickerText = "";
   oledTickerTextWidth = 0;
+  oledNotificationTitle = "";
 
   // v1.6.0: when text/ticker display mode exits, explicitly re-arm the
   // current mood so returning to the face restores the correct RoboEyes setup.
@@ -8518,7 +8561,7 @@ button:disabled {
 opacity: 0.55;
 cursor: not-allowed;
 }
-input[type="number"], input[type="text"], input[type="time"], select {
+input[type="number"], input[type="text"], input[type="time"], textarea, select {
 width: 100%;
 border: 1px solid var(--border);
 border-radius: 14px;
@@ -8541,7 +8584,7 @@ margin: 10px 0 4px;
 }
 .trait-line strong { color: var(--text); }
 .trait-line span { color: var(--accent); font-weight: 900; }
-input[type="number"]:focus, input[type="text"]:focus, input[type="time"]:focus, select:focus {
+input[type="number"]:focus, input[type="text"]:focus, input[type="time"]:focus, textarea:focus, select:focus {
 border-color: var(--accent);
 box-shadow: 0 0 0 3px rgba(157,232,255,0.14);
 }
@@ -8712,6 +8755,13 @@ header, main { padding: 16px; }
 <button class="secondary" onclick="action('weather_refresh')">Refresh Weather</button>
 <button class="secondary" onclick="action('show_weather')">Show on OLED</button>
 </div>
+</section>
+<section class="card" data-page="dashboard">
+<h2>Custom Notification</h2>
+<div class="muted">Send a title and an arbitrarily long scrolling body to the OLED. The display duration is sized automatically.</div>
+<label class="setting" style="display:block;">Title<input type="text" id="notificationTitle" maxlength="512" value="YETI says"></label>
+<label class="setting" style="display:block;">Body<textarea id="notificationBody" rows="3" maxlength="512" placeholder="Hello over Wi-Fi"></textarea></label>
+<div class="row"><button class="secondary" onclick="sendNotification()">Show on OLED</button></div>
 </section>
 <section class="card" data-page="dashboard">
 <h2>Sensors</h2>
@@ -9666,6 +9716,27 @@ box.appendChild(item);
 console.error(e);
 box.innerHTML = '<div class="muted">Location lookup failed. Manual coordinates still work.</div>';
 showToast('Location lookup failed.', 'error');
+}
+}
+async function sendNotification() {
+const title = document.getElementById('notificationTitle').value.trim();
+const body = document.getElementById('notificationBody').value.trim();
+if (!title || !body) {
+showToast('Enter both a notification title and body.', 'warn');
+return;
+}
+try {
+const res = await fetch('/api/notification', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ title, body })
+});
+const payload = await res.json();
+if (!res.ok || !payload.ok) throw new Error(payload.error || 'Notification failed');
+showToast('Notification sent to OLED.', 'ok');
+} catch (e) {
+console.error(e);
+showToast('Notification failed: ' + (e.message || 'unknown'), 'error');
 }
 }
 function testWeather() {
@@ -10993,6 +11064,48 @@ void handleApiMoodMovementNow() {
   sendMoodApiResponse(true);
 }
 
+void handleApiNotificationPost() {
+  if (setupMode) {
+    server.send(403, "application/json", "{\"ok\":false,\"error\":\"setup_mode\"}");
+    return;
+  }
+
+  String payload = server.arg("plain");
+  String title;
+  String body;
+  if (!jsonFindString(payload, "title", title) || !jsonFindString(payload, "body", body)) {
+    server.send(400, "application/json", "{\"ok\":false,\"error\":\"title_and_body_required\"}");
+    return;
+  }
+
+  title.trim();
+  body.replace("\n", " ");
+  body.replace("\r", " ");
+  body.trim();
+  if (title.length() == 0 || body.length() == 0) {
+    server.send(400, "application/json", "{\"ok\":false,\"error\":\"title_and_body_required\"}");
+    return;
+  }
+  if (title.length() > YETI_NOTIFICATION_MAX_TEXT_LEN || body.length() > YETI_NOTIFICATION_MAX_TEXT_LEN) {
+    server.send(400, "application/json", "{\"ok\":false,\"error\":\"notification_text_too_long\",\"maxLength\":512}");
+    return;
+  }
+
+  recordMemoryEvent(EVENT_WEBUI_COMMAND);
+  wakeYetiFromSleep("custom notification", true);
+  oledNotificationTitle = title;
+  oledTickerText = body;
+  oledTickerTextWidth = oledTextWidth(oledTickerText, 2);
+  uint32_t durationMs = weatherTickerDurationFor(oledTickerText);
+  startOledOverlay(OLED_OVERLAY_NOTIFICATION_TICKER, durationMs);
+  drawNotificationTickerOverlay();
+  addEvent("OLED", String("Displayed notification: ") + title);
+
+  String json = "{\"ok\":true,\"durationMs\":" + String(durationMs) + "}";
+  server.sendHeader("Cache-Control", "no-store");
+  server.send(200, "application/json", json);
+}
+
 void handleApiSequencePost() {
   if (setupMode) {
     server.send(403, "application/json", "{\"ok\":false,\"error\":\"setup_mode\"}");
@@ -11317,6 +11430,7 @@ void setupWebServer() {
   server.on("/api/sass/grievance", HTTP_POST, handleApiSassGrievance);
   server.on("/api/sass/random", HTTP_POST, handleApiSassRandom);
   server.on("/api/sass/clear", HTTP_POST, handleApiSassClear);
+  server.on("/api/notification", HTTP_POST, handleApiNotificationPost);
   server.on("/api/sequence", HTTP_POST, handleApiSequencePost);
   server.on("/api/sequence/stop", HTTP_POST, handleApiSequenceStop);
   server.on("/api/action", HTTP_POST, handleApiAction);

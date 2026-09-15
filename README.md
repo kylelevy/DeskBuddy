@@ -29,7 +29,7 @@ This project is currently centered around an **ESP32-C3 Super Mini** style board
 
 | Item | Value |
 |---|---|
-| Firmware version | `1.7.4-sleep-preview-compile-fix` |
+| Firmware version | `1.1` |
 | Primary board target | ESP32-C3 Super Mini / ESP32-C3 Dev Module target |
 | Face engine | FluxGarage RoboEyes by default |
 | Display | SSD1306 128x64 I2C OLED, usually address `0x3C` |

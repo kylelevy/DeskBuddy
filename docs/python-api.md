@@ -98,6 +98,19 @@ I2CDevice(
 )
 ```
 
+## Custom notifications
+
+| Method | Firmware route | Payload |
+|---|---|---|
+| `notify(title, body)` | `POST /api/notification` | JSON `{ "title": ..., "body": ... }` |
+
+`notify()` displays the title as a static OLED header and scrolls the body using the weather ticker pacing. The firmware derives the display duration from the body width and accepts up to 512 characters for each field.
+
+```python
+with YetiClient() as yeti:
+    yeti.notify("Build complete", "The firmware test suite passed over Wi-Fi.")
+```
+
 ## Mood and personality
 
 | Method | Firmware operation |
