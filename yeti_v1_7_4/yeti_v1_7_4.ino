@@ -125,58 +125,58 @@
 #define YETI_BOARD_CUSTOM 99
 
 #ifndef YETI_BOARD_PROFILE
-  #if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(ARDUINO_ESP32C3_DEV)
-    #define YETI_BOARD_PROFILE YETI_BOARD_ESP32_C3_MINI
-  #else
-    #define YETI_BOARD_PROFILE YETI_BOARD_ESP32_DEVKIT
-  #endif
+#if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(ARDUINO_ESP32C3_DEV)
+#define YETI_BOARD_PROFILE YETI_BOARD_ESP32_C3_MINI
+#else
+#define YETI_BOARD_PROFILE YETI_BOARD_ESP32_DEVKIT
+#endif
 #endif
 
 #if YETI_BOARD_PROFILE == YETI_BOARD_ESP32_DEVKIT
-  #define YETI_BOARD_PROFILE_NAME "ESP32 DevKit / WROOM"
-  #define YETI_I2C_SDA_PIN 21
-  #define YETI_I2C_SCL_PIN 22
-  #define YETI_OLED_ENABLED 1
-  #define YETI_OLED_I2C_ADDRESS 0x3C
-  #define YETI_OLED_RESET_PIN -1
-  #define YETI_MPU_ENABLED 1
-  #define YETI_MPU_I2C_ADDRESS 0x68
-  #define YETI_TOUCH_ENABLED 1
-  #define YETI_TOUCH_PIN T0
-  #define YETI_TOUCH_PIN_LABEL "D4 / GPIO4 / T0"
+#define YETI_BOARD_PROFILE_NAME "ESP32 DevKit / WROOM"
+#define YETI_I2C_SDA_PIN 21
+#define YETI_I2C_SCL_PIN 22
+#define YETI_OLED_ENABLED 1
+#define YETI_OLED_I2C_ADDRESS 0x3C
+#define YETI_OLED_RESET_PIN -1
+#define YETI_MPU_ENABLED 1
+#define YETI_MPU_I2C_ADDRESS 0x68
+#define YETI_TOUCH_ENABLED 1
+#define YETI_TOUCH_PIN T0
+#define YETI_TOUCH_PIN_LABEL "D4 / GPIO4 / T0"
 
 #elif YETI_BOARD_PROFILE == YETI_BOARD_ESP32_C3_MINI
-  #define YETI_BOARD_PROFILE_NAME "ESP32-C3 Super Mini"
-  // Verified wiring for this ESP32-C3 Super Mini build.
-  // I2C scanner found OLED at 0x3C and MPU at 0x68 on GPIO1/GPIO3.
-  #define YETI_I2C_SDA_PIN 1
-  #define YETI_I2C_SCL_PIN 3
-  #define YETI_OLED_ENABLED 1
-  #define YETI_OLED_I2C_ADDRESS 0x3C
-  #define YETI_OLED_RESET_PIN -1
-  #define YETI_MPU_ENABLED 1
-  #define YETI_MPU_I2C_ADDRESS 0x68
-  // ESP32-C3 does not have the same built-in capacitive touchRead pads as classic ESP32.
-  // Use an external touch module/button on a GPIO if you want touch on C3, then add code for it.
-  #define YETI_TOUCH_ENABLED 0
-  #define YETI_TOUCH_PIN_LABEL "disabled on ESP32-C3"
+#define YETI_BOARD_PROFILE_NAME "ESP32-C3 Super Mini"
+// Verified wiring for this ESP32-C3 Super Mini build.
+// I2C scanner found OLED at 0x3C and MPU at 0x68 on GPIO1/GPIO3.
+#define YETI_I2C_SDA_PIN 8
+#define YETI_I2C_SCL_PIN 9
+#define YETI_OLED_ENABLED 1
+#define YETI_OLED_I2C_ADDRESS 0x3C
+#define YETI_OLED_RESET_PIN -1
+#define YETI_MPU_ENABLED 1
+#define YETI_MPU_I2C_ADDRESS 0x68
+// ESP32-C3 does not have the same built-in capacitive touchRead pads as classic ESP32.
+// Use an external touch module/button on a GPIO if you want touch on C3, then add code for it.
+#define YETI_TOUCH_ENABLED 0
+#define YETI_TOUCH_PIN_LABEL "disabled on ESP32-C3"
 
 #elif YETI_BOARD_PROFILE == YETI_BOARD_CUSTOM
-  #define YETI_BOARD_PROFILE_NAME "Custom"
-  // Change only this block for a one-off wiring layout.
-  #define YETI_I2C_SDA_PIN 21
-  #define YETI_I2C_SCL_PIN 22
-  #define YETI_OLED_ENABLED 1
-  #define YETI_OLED_I2C_ADDRESS 0x3C
-  #define YETI_OLED_RESET_PIN -1
-  #define YETI_MPU_ENABLED 1
-  #define YETI_MPU_I2C_ADDRESS 0x68
-  #define YETI_TOUCH_ENABLED 1
-  #define YETI_TOUCH_PIN T0
-  #define YETI_TOUCH_PIN_LABEL "custom touch pin"
+#define YETI_BOARD_PROFILE_NAME "Custom"
+// Change only this block for a one-off wiring layout.
+#define YETI_I2C_SDA_PIN 21
+#define YETI_I2C_SCL_PIN 22
+#define YETI_OLED_ENABLED 1
+#define YETI_OLED_I2C_ADDRESS 0x3C
+#define YETI_OLED_RESET_PIN -1
+#define YETI_MPU_ENABLED 1
+#define YETI_MPU_I2C_ADDRESS 0x68
+#define YETI_TOUCH_ENABLED 1
+#define YETI_TOUCH_PIN T0
+#define YETI_TOUCH_PIN_LABEL "custom touch pin"
 
 #else
-  #error "Unknown YETI_BOARD_PROFILE selected."
+#error "Unknown YETI_BOARD_PROFILE selected."
 #endif
 
 #define YETI_I2C_CLOCK_HZ 400000
@@ -205,18 +205,18 @@ bool oledReady = false;
 #define YETI_FACE_ENGINE_ROBOEYES 1
 
 #ifndef YETI_FACE_ENGINE
-  #define YETI_FACE_ENGINE YETI_FACE_ENGINE_ROBOEYES
+#define YETI_FACE_ENGINE YETI_FACE_ENGINE_ROBOEYES
 #endif
 
 #if YETI_FACE_ENGINE == YETI_FACE_ENGINE_ROBOEYES
-  #include <FluxGarage_RoboEyes.h>
-  RoboEyes<Adafruit_SSD1306> roboEyes(display);
+#include <FluxGarage_RoboEyes.h>
+RoboEyes<Adafruit_SSD1306> roboEyes(display);
 #endif
 
 // Startup OLED screens are intentionally readable, not blink-and-you-miss-it.
 // Set either to 0 if you want faster boots later.
-const unsigned long YETI_BOOT_STEP_SCREEN_MS = 0; //1200;
-const unsigned long YETI_BOOT_FINAL_INFO_MS = 0;  //7000;
+const unsigned long YETI_BOOT_STEP_SCREEN_MS = 0;  //1200;
+const unsigned long YETI_BOOT_FINAL_INFO_MS = 0;   //7000;
 
 // Runtime tuning:
 // SSD1306 display.display() flushes the whole 128x64 framebuffer over I2C.
@@ -234,15 +234,15 @@ const unsigned long YETI_LOOP_IDLE_DELAY_MS = 1;
 // APP / WIFI CONFIG
 // =====================================================
 
-const char* APP_NAME = "Yeti";
-const char* APP_VERSION = "1.7.4-sleep-preview-compile-fix";
-const char* DEFAULT_HOSTNAME = "yeti";
+const char *APP_NAME = "Yeti";
+const char *APP_VERSION = "1.7.4-sleep-preview-compile-fix";
+const char *DEFAULT_HOSTNAME = "yeti";
 const uint8_t YETI_HOSTNAME_MAX_LEN = 31;
 String configuredHostname = DEFAULT_HOSTNAME;
 
 // Empty = open setup hotspot.
 // Use 8+ chars if you want setup AP password protection.
-const char* SETUP_AP_PASSWORD = "";
+const char *SETUP_AP_PASSWORD = "";
 
 WebServer server(80);
 DNSServer dnsServer;
@@ -269,18 +269,18 @@ unsigned long lastReconnectAttempt = 0;
 // Weather uses Open-Meteo because it needs no API key for non-commercial use.
 // The ESP32 fetches only the small "current" payload to keep RAM use sane.
 
-const uint32_t YETI_WEATHER_UPDATE_DEFAULT_MS = 900000;   // 15 minutes.
-const uint32_t YETI_WEATHER_UPDATE_MIN_MS = 300000;       // 5 minutes; polite to free APIs.
-const uint32_t YETI_WEATHER_UPDATE_MAX_MS = 21600000;     // 6 hours.
+const uint32_t YETI_WEATHER_UPDATE_DEFAULT_MS = 900000;  // 15 minutes.
+const uint32_t YETI_WEATHER_UPDATE_MIN_MS = 300000;      // 5 minutes; polite to free APIs.
+const uint32_t YETI_WEATHER_UPDATE_MAX_MS = 21600000;    // 6 hours.
 
-const uint32_t YETI_INFO_CARD_DEFAULT_MS = 60000;         // OLED clock/weather card interval.
+const uint32_t YETI_INFO_CARD_DEFAULT_MS = 60000;  // OLED clock/weather card interval.
 const uint32_t YETI_INFO_CARD_MIN_MS = 10000;
 const uint32_t YETI_INFO_CARD_MAX_MS = 3600000;
 const uint32_t YETI_INFO_CARD_DURATION_MS = 6500;
 const uint32_t YETI_CLOCK_TIME_PAGE_MS = 4200;
 const uint32_t YETI_CLOCK_DATE_PAGE_MS = 3600;
 const uint32_t YETI_CLOCK_SEQUENCE_DURATION_MS = YETI_CLOCK_TIME_PAGE_MS + YETI_CLOCK_DATE_PAGE_MS;
-const uint32_t YETI_WEATHER_TICKER_STEP_MS = 45;    // Scroll cadence. Lower = faster/more OLED work.
+const uint32_t YETI_WEATHER_TICKER_STEP_MS = 45;  // Scroll cadence. Lower = faster/more OLED work.
 const uint8_t YETI_WEATHER_TICKER_PX_PER_STEP = 2;
 const uint32_t YETI_WEATHER_TICKER_MIN_MS = 11000;
 const uint32_t YETI_WEATHER_TICKER_MAX_MS = 28000;
@@ -333,9 +333,9 @@ const uint32_t YETI_SLEEP_GAP_MIN_DEFAULT_MS = 45000;
 const uint32_t YETI_SLEEP_GAP_MAX_DEFAULT_MS = 180000;
 const uint32_t YETI_SLEEP_GAP_MIN_ALLOWED_MS = 5000;
 const uint32_t YETI_SLEEP_GAP_MAX_ALLOWED_MS = 3600000;
-const uint32_t YETI_SLEEP_WAKE_HOLD_DEFAULT_MS = 900000;   // 15 minutes before schedule may reclaim him.
+const uint32_t YETI_SLEEP_WAKE_HOLD_DEFAULT_MS = 900000;  // 15 minutes before schedule may reclaim him.
 const uint32_t YETI_SLEEP_WAKE_HOLD_MIN_MS = 30000;
-const uint32_t YETI_SLEEP_WAKE_HOLD_MAX_MS = 21600000;     // 6 hours.
+const uint32_t YETI_SLEEP_WAKE_HOLD_MAX_MS = 21600000;  // 6 hours.
 const uint32_t YETI_SLEEP_FRAME_MS = 240;
 const uint32_t YETI_SLEEP_PREVIEW_DEFAULT_MS = 5000;
 
@@ -413,11 +413,11 @@ const float TOUCH_THRESHOLD_RATIO = 0.70;
 #define MPU_ADDRESS YETI_MPU_I2C_ADDRESS
 
 #define MPU_REG_PWR_MGMT_1 0x6B
-#define MPU_REG_CONFIG     0x1A
-#define MPU_REG_GYRO_CFG   0x1B
-#define MPU_REG_ACCEL_CFG  0x1C
+#define MPU_REG_CONFIG 0x1A
+#define MPU_REG_GYRO_CFG 0x1B
+#define MPU_REG_ACCEL_CFG 0x1C
 #define MPU_REG_ACCEL_XOUT 0x3B
-#define MPU_REG_WHO_AM_I   0x75
+#define MPU_REG_WHO_AM_I 0x75
 
 bool mpuReady = false;
 
@@ -568,19 +568,19 @@ struct YetiPersonality {
 };
 
 struct YetiPersonalityPreset {
-  const char* id;
-  const char* name;
-  const char* description;
+  const char *id;
+  const char *name;
+  const char *description;
   YetiMood baseMood;
   YetiPersonality traits;
 };
 
 const YetiPersonalityPreset PERSONALITY_PRESETS[] = {
-  {"classic", "Classic YETI", "The original suspicious desktop jerk. Balanced grump, mild curiosity, low friendliness.", MOOD_DEADPAN, {70, 45, 40, 30, 25}},
-  {"friendly", "Friendly YETI", "More happy reactions, curious glances, and fewer rage goblin incidents.", MOOD_HAPPY, {20, 70, 30, 15, 80}},
-  {"sleepy", "Sleepy YETI", "Low-energy, tired eyes, long sleepy idle moods, and haunted paperweight vibes.", MOOD_SLEEPY, {35, 20, 90, 15, 40}},
-  {"feral", "Feral Goblin", "Maximum chaos, grumpiness cranked, friendliness murdered in an alley.", MOOD_ANNOYED, {90, 80, 10, 95, 5}},
-  {"weather", "Weather Gremlin", "Curious, reactive, and ready for future weather-based mood nonsense.", MOOD_CURIOUS, {50, 80, 25, 45, 35}}
+  { "classic", "Classic YETI", "The original suspicious desktop jerk. Balanced grump, mild curiosity, low friendliness.", MOOD_DEADPAN, { 70, 45, 40, 30, 25 } },
+  { "friendly", "Friendly YETI", "More happy reactions, curious glances, and fewer rage goblin incidents.", MOOD_HAPPY, { 20, 70, 30, 15, 80 } },
+  { "sleepy", "Sleepy YETI", "Low-energy, tired eyes, long sleepy idle moods, and haunted paperweight vibes.", MOOD_SLEEPY, { 35, 20, 90, 15, 40 } },
+  { "feral", "Feral Goblin", "Maximum chaos, grumpiness cranked, friendliness murdered in an alley.", MOOD_ANNOYED, { 90, 80, 10, 95, 5 } },
+  { "weather", "Weather Gremlin", "Curious, reactive, and ready for future weather-based mood nonsense.", MOOD_CURIOUS, { 50, 80, 25, 45, 35 } }
 };
 
 const uint8_t PERSONALITY_PRESET_COUNT = sizeof(PERSONALITY_PRESETS) / sizeof(PERSONALITY_PRESETS[0]);
@@ -659,7 +659,7 @@ struct YetiDailyMemory {
   uint16_t yesterdayAngryMoodCount;
   uint16_t yesterdayHappyMoodCount;
 
-  char lastMemoryDate[11]; // YYYY-MM-DD, empty until clock syncs
+  char lastMemoryDate[11];  // YYYY-MM-DD, empty until clock syncs
 };
 
 bool memoryEnabled = true;
@@ -667,11 +667,11 @@ bool memoryDirty = false;
 unsigned long lastMemorySaveMs = 0;
 const unsigned long YETI_MEMORY_SAVE_INTERVAL_MS = 60000UL;
 
-YetiMemoryStats memoryStats = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-YetiRelationship relationship = {35, 20, 50, 25};
-YetiGrudges grudges = {0, 0, 0, 0, 0, 0};
-YetiNeeds needs = {20, 70, 20, 10};
-YetiDailyMemory dailyMemory = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ""};
+YetiMemoryStats memoryStats = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+YetiRelationship relationship = { 35, 20, 50, 25 };
+YetiGrudges grudges = { 0, 0, 0, 0, 0, 0 };
+YetiNeeds needs = { 20, 70, 20, 10 };
+YetiDailyMemory dailyMemory = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "" };
 bool needsEnabled = true;
 String lastMemoryEvent = "None yet";
 String lastMemoryNote = "Daily memory system loaded";
@@ -766,7 +766,7 @@ bool roboEyesStarted = false;
 // Runtime behavior/performance config, persisted in Preferences.
 uint32_t faceFrameMs = YETI_FACE_FRAME_DEFAULT_MS;
 unsigned long lastFaceRenderMs = 0;
-unsigned long lastFaceDraw = 0; // Classic renderer throttle; reset after sleep preview to force redraw.
+unsigned long lastFaceDraw = 0;  // Classic renderer throttle; reset after sleep preview to force redraw.
 
 // Temporary OLED info screens requested from the WebUI/serial console.
 // While active, the face renderer politely backs off so the info stays readable.
@@ -824,14 +824,10 @@ uint32_t expressionBit(Expression expression) {
 }
 
 const uint32_t DEFAULT_SHAKE_MASK =
-  expressionBit(FACE_ANGRY) |
-  expressionBit(FACE_SURPRISED) |
-  expressionBit(FACE_SHOCKED);
+  expressionBit(FACE_ANGRY) | expressionBit(FACE_SURPRISED) | expressionBit(FACE_SHOCKED);
 
 const uint32_t DEFAULT_TOUCH_MASK =
-  expressionBit(FACE_HAPPY) |
-  expressionBit(FACE_SLEEPY) |
-  expressionBit(FACE_SURPRISED);
+  expressionBit(FACE_HAPPY) | expressionBit(FACE_SLEEPY) | expressionBit(FACE_SURPRISED);
 
 SensorTriggerConfig shakeConfig = {
   true,
@@ -1011,7 +1007,7 @@ uint16_t oledTextWidth(String text, uint8_t size);
 void drawCenteredOledText(String text, int16_t y, uint8_t size);
 void startOledOverlay(OledOverlayMode mode, unsigned long durationMs);
 void stopOledOverlay();
-const char* oledOverlayModeName(OledOverlayMode mode);
+const char *oledOverlayModeName(OledOverlayMode mode);
 String oledOverlayModeLabel(OledOverlayMode mode);
 String displayModeLabel();
 String moodAutomationSummary();
@@ -1021,7 +1017,7 @@ void drawWeatherTickerOverlay();
 void updateOledOverlay();
 void initFaceEngine();
 void updateFaceEngine();
-const char* moodToString(YetiMood mood);
+const char *moodToString(YetiMood mood);
 YetiMood stringToMood(String moodName);
 Expression expressionForMood(YetiMood mood);
 YetiMood moodFromExpression(Expression expression);
@@ -1039,7 +1035,7 @@ int weightedTraitValue(int raw);
 bool runRandomIdleBehavior();
 void triggerPokeYeti();
 void calmDownYeti();
-const char* sequenceToString(YetiSequence seq);
+const char *sequenceToString(YetiSequence seq);
 String sequenceLabel(YetiSequence seq);
 YetiSequence stringToSequence(String seqName);
 bool sequenceActive();
@@ -1049,13 +1045,13 @@ void updateSequence();
 bool sequenceStepMood(YetiMood mood, unsigned long durationMs, MoodPriority priority);
 void finishSequence(bool returnToBase = true);
 void saveBehaviorConfig();
-const YetiPersonalityPreset* findPersonalityPreset(String presetId);
+const YetiPersonalityPreset *findPersonalityPreset(String presetId);
 bool personalityMatchesPreset(const YetiPersonalityPreset &preset);
 String activePersonalityPresetId();
 String activePersonalityPresetLabel();
 bool applyPersonalityPreset(String presetId, bool saveNow = true);
 String personalityPresetOptionsJson();
-const char* yetiEventName(YetiEvent event);
+const char *yetiEventName(YetiEvent event);
 bool cooldownReady(unsigned long lastMs, unsigned long cooldownMs);
 void recordReaction(YetiEvent event, String reason);
 void handleYetiEvent(YetiEvent event);
@@ -1091,7 +1087,7 @@ bool shouldNeedsTriggerMood();
 String getNeedsSummary();
 String getNeedsBiasSummary();
 String currentDailyMemoryDateKey();
-void setDailyMemoryDate(const String& dateKey);
+void setDailyMemoryDate(const String &dateKey);
 void clearTodayDailyMemory();
 void resetDailyMemory();
 void rolloverDailyMemoryIfNeeded(bool force = false);
@@ -1115,7 +1111,7 @@ String getTrustStatus();
 String getRelationshipTone();
 String getDailyOpinionSummary();
 String getYetiReportCard();
-const char* phraseCategoryName(YetiPhraseCategory category);
+const char *phraseCategoryName(YetiPhraseCategory category);
 String phraseCategoryLabel(YetiPhraseCategory category);
 YetiPhraseCategory stringToPhraseCategory(String name);
 YetiPhraseCategory phraseCategoryForEvent(YetiEvent event);
@@ -1123,7 +1119,7 @@ uint32_t sassCooldownMs();
 bool sassCooldownReady(bool force = false);
 bool canShowSassPhrase(bool force = false, YetiPhraseCategory category = PHRASE_IDLE);
 uint32_t sassTickerDurationFor(String text);
-const char* pickPhrase(YetiPhraseCategory category);
+const char *pickPhrase(YetiPhraseCategory category);
 bool showSassPhrase(String phrase, YetiPhraseCategory category, bool force = false);
 bool maybeShowMemoryPhrase(YetiPhraseCategory category, bool force = false);
 void drawSassTickerOverlay();
@@ -1975,6 +1971,7 @@ void drawWeatherTickerOverlay() {
   display.drawLine(0, 10, 127, 10, SSD1306_WHITE);
 
   display.setTextSize(2);
+  display.setTextWrap(false);
   display.setCursor(x, 24);
   display.print(oledTickerText);
 
@@ -2243,7 +2240,7 @@ Expression expressionFromName(String name) {
   return FACE_NORMAL;
 }
 
-const char* moodToString(YetiMood mood) {
+const char *moodToString(YetiMood mood) {
   switch (mood) {
     case MOOD_DEADPAN: return "deadpan";
     case MOOD_HAPPY: return "happy";
@@ -2324,7 +2321,7 @@ int sanitizePersonalityTrait(int value, int fallback = 50) {
   return value;
 }
 
-const YetiPersonalityPreset* findPersonalityPreset(String presetId) {
+const YetiPersonalityPreset *findPersonalityPreset(String presetId) {
   presetId.trim();
   presetId.toLowerCase();
 
@@ -2338,12 +2335,7 @@ const YetiPersonalityPreset* findPersonalityPreset(String presetId) {
 }
 
 bool personalityMatchesPreset(const YetiPersonalityPreset &preset) {
-  return baseMood == preset.baseMood &&
-         personality.grumpiness == preset.traits.grumpiness &&
-         personality.curiosity == preset.traits.curiosity &&
-         personality.sleepiness == preset.traits.sleepiness &&
-         personality.chaos == preset.traits.chaos &&
-         personality.friendliness == preset.traits.friendliness;
+  return baseMood == preset.baseMood && personality.grumpiness == preset.traits.grumpiness && personality.curiosity == preset.traits.curiosity && personality.sleepiness == preset.traits.sleepiness && personality.chaos == preset.traits.chaos && personality.friendliness == preset.traits.friendliness;
 }
 
 String activePersonalityPresetId() {
@@ -2367,7 +2359,7 @@ String activePersonalityPresetLabel() {
 }
 
 bool applyPersonalityPreset(String presetId, bool saveNow) {
-  const YetiPersonalityPreset* preset = findPersonalityPreset(presetId);
+  const YetiPersonalityPreset *preset = findPersonalityPreset(presetId);
   if (!preset) {
     return false;
   }
@@ -2404,7 +2396,7 @@ bool moodTemporaryActive() {
   return moodUntilMs > 0 && millis() < moodUntilMs;
 }
 
-const char* yetiEventName(YetiEvent event) {
+const char *yetiEventName(YetiEvent event) {
   switch (event) {
     case EVENT_BOOT: return "boot";
     case EVENT_WIFI_CONNECTED: return "wifi_connected";
@@ -2489,7 +2481,7 @@ void recordMovementReaction(YetiEvent event, String reason) {
   recordReaction(event, reason);
 }
 
-const char* sequenceToString(YetiSequence seq) {
+const char *sequenceToString(YetiSequence seq) {
   switch (seq) {
     case SEQ_NONE: return "none";
     case SEQ_POKE_REACTION: return "poke_reaction";
@@ -2786,16 +2778,11 @@ void updateSequence() {
 }
 
 bool weatherCodeIsRain(int code) {
-  return code == 51 || code == 53 || code == 55 ||
-         code == 56 || code == 57 ||
-         code == 61 || code == 63 || code == 65 ||
-         code == 66 || code == 67 ||
-         code == 80 || code == 81 || code == 82;
+  return code == 51 || code == 53 || code == 55 || code == 56 || code == 57 || code == 61 || code == 63 || code == 65 || code == 66 || code == 67 || code == 80 || code == 81 || code == 82;
 }
 
 bool weatherCodeIsSnow(int code) {
-  return code == 71 || code == 73 || code == 75 ||
-         code == 77 || code == 85 || code == 86;
+  return code == 71 || code == 73 || code == 75 || code == 77 || code == 85 || code == 86;
 }
 
 bool weatherCodeIsStorm(int code) {
@@ -2876,13 +2863,14 @@ void handleYetiEvent(YetiEvent event) {
   unsigned long now = millis();
 
   switch (event) {
-    case EVENT_BOOT: {
-      YetiSequence bootSeq = bootSequenceFromDailyMemory();
-      String reason = getYesterdayBootReason();
-      startSequence(bootSeq, reason, PRIORITY_ALERT);
-      recordReaction(event, String("boot sequence initialized: ") + reason);
-      break;
-    }
+    case EVENT_BOOT:
+      {
+        YetiSequence bootSeq = bootSequenceFromDailyMemory();
+        String reason = getYesterdayBootReason();
+        startSequence(bootSeq, reason, PRIORITY_ALERT);
+        recordReaction(event, String("boot sequence initialized: ") + reason);
+        break;
+      }
 
     case EVENT_WIFI_CONNECTED:
     case EVENT_WIFI_RESTORED:
@@ -3078,7 +3066,7 @@ bool faceDisplayAvailable() {
   return oledReady && !setupMode && !oledOverlayActive && !demoMode && !sleepModeActive;
 }
 
-const char* oledOverlayModeName(OledOverlayMode mode) {
+const char *oledOverlayModeName(OledOverlayMode mode) {
   switch (mode) {
     case OLED_OVERLAY_NONE: return "none";
     case OLED_OVERLAY_STATUS: return "status";
@@ -3632,9 +3620,7 @@ bool runRandomIdleBehavior() {
   int chaos = sanitizePersonalityTrait(personality.chaos, 30);
 
   // v1.5.5: occasionally turn an idle pick into a tiny acting sequence.
-  if (!sequenceActive() &&
-      (picked == MOOD_SLEEPY || picked == MOOD_SMUG || picked == MOOD_ANNOYED) &&
-      random(100) < (10 + chaos / 3)) {
+  if (!sequenceActive() && (picked == MOOD_SLEEPY || picked == MOOD_SMUG || picked == MOOD_ANNOYED) && random(100) < (10 + chaos / 3)) {
     bool sequenceStarted = startSequence(SEQ_IDLE_BOREDOM, "weighted idle boredom", PRIORITY_IDLE);
     if (sequenceStarted) {
       lastIdleMood = picked;
@@ -3657,8 +3643,7 @@ bool runRandomIdleBehavior() {
     }
     idleMoodCount++;
 
-    addEvent("Mood", String("Idle pick: ") + moodToString(picked) +
-             " for " + String(duration) + " ms (" + lastIdleReason + ")");
+    addEvent("Mood", String("Idle pick: ") + moodToString(picked) + " for " + String(duration) + " ms (" + lastIdleReason + ")");
   }
 
   return changed;
@@ -3927,7 +3912,7 @@ String currentDailyMemoryDateKey() {
   return String(buf);
 }
 
-void setDailyMemoryDate(const String& dateKey) {
+void setDailyMemoryDate(const String &dateKey) {
   String safe = dateKey;
   safe.trim();
   if (safe.length() > 10) {
@@ -4277,11 +4262,26 @@ String getWorstGrudgeName() {
   int value = grudges.pokeGrudge;
   String name = "Poke";
 
-  if (grudges.shakeGrudge > value) { value = grudges.shakeGrudge; name = "Shake"; }
-  if (grudges.wifiGrudge > value) { value = grudges.wifiGrudge; name = "Wi-Fi"; }
-  if (grudges.weatherGrudge > value) { value = grudges.weatherGrudge; name = "Weather"; }
-  if (grudges.rebootGrudge > value) { value = grudges.rebootGrudge; name = "Reboot"; }
-  if (grudges.neglectGrudge > value) { value = grudges.neglectGrudge; name = "Neglect"; }
+  if (grudges.shakeGrudge > value) {
+    value = grudges.shakeGrudge;
+    name = "Shake";
+  }
+  if (grudges.wifiGrudge > value) {
+    value = grudges.wifiGrudge;
+    name = "Wi-Fi";
+  }
+  if (grudges.weatherGrudge > value) {
+    value = grudges.weatherGrudge;
+    name = "Weather";
+  }
+  if (grudges.rebootGrudge > value) {
+    value = grudges.rebootGrudge;
+    name = "Reboot";
+  }
+  if (grudges.neglectGrudge > value) {
+    value = grudges.neglectGrudge;
+    name = "Neglect";
+  }
 
   if (value <= 0) return "None";
   return name + " (" + String(value) + ")";
@@ -4646,7 +4646,6 @@ void recordMemoryEvent(YetiEvent event) {
       // Some events are useful as live diagnostics but do not need persistent writes.
       break;
   }
-
 }
 
 
@@ -4862,7 +4861,7 @@ String getRelationshipSummary() {
   return String("A") + relationship.affection + " / N" + relationship.annoyance + " / T" + relationship.trust + " / S" + relationship.suspicion;
 }
 
-const char* phraseCategoryName(YetiPhraseCategory category) {
+const char *phraseCategoryName(YetiPhraseCategory category) {
   switch (category) {
     case PHRASE_POKE: return "poke";
     case PHRASE_SHAKE: return "shake";
@@ -5013,7 +5012,7 @@ uint32_t sassTickerDurationFor(String text) {
   return duration;
 }
 
-const char* pickPhrase(YetiPhraseCategory category) {
+const char *pickPhrase(YetiPhraseCategory category) {
   switch (category) {
     case PHRASE_POKE:
       if (grudges.pokeGrudge >= 70) {
@@ -5671,8 +5670,7 @@ void stopOledOverlay() {
   // v1.6.0: when text/ticker display mode exits, explicitly re-arm the
   // current mood so returning to the face restores the correct RoboEyes setup.
   applyMood(currentMood);
-  addEvent("OLED", String("Overlay finished: ") + oledOverlayModeLabel(previousMode) +
-           " -> face " + moodToString(currentMood));
+  addEvent("OLED", String("Overlay finished: ") + oledOverlayModeLabel(previousMode) + " -> face " + moodToString(currentMood));
 }
 
 void showTemporaryOledStatus(String title, String line1, String line2, String line3, String line4, String line5 = "", unsigned long durationMs = 5000) {
@@ -6195,8 +6193,7 @@ void showBootHardwareScreen() {
     i2cLine,
     "OLED " + hexAddress(YETI_OLED_I2C_ADDRESS),
     "MPU " + hexAddress(YETI_MPU_I2C_ADDRESS),
-    String("Touch: ") + String(YETI_TOUCH_ENABLED ? "On" : "Off")
-  );
+    String("Touch: ") + String(YETI_TOUCH_ENABLED ? "On" : "Off"));
 }
 
 void showBootSensorScreen() {
@@ -6208,8 +6205,7 @@ void showBootSensorScreen() {
     String("MPU: ") + yesNo(mpuReady),
     touchLine,
     "Heap: " + bytesToHuman(ESP.getFreeHeap()),
-    "Booting network"
-  );
+    "Booting network");
 }
 
 void showBootReadyScreen() {
@@ -6221,8 +6217,7 @@ void showBootReadyScreen() {
       "IP: " + WiFi.softAPIP().toString(),
       "Open browser to",
       "192.168.4.1",
-      YETI_BOOT_FINAL_INFO_MS
-    );
+      YETI_BOOT_FINAL_INFO_MS);
     return;
   }
 
@@ -6234,8 +6229,7 @@ void showBootReadyScreen() {
       "IP: " + WiFi.localIP().toString(),
       "WebUI:",
       hostnameLocalUrl(),
-      YETI_BOOT_FINAL_INFO_MS
-    );
+      YETI_BOOT_FINAL_INFO_MS);
     return;
   }
 
@@ -6246,8 +6240,7 @@ void showBootReadyScreen() {
     "or Serial Monitor",
     "",
     "",
-    YETI_BOOT_FINAL_INFO_MS
-  );
+    YETI_BOOT_FINAL_INFO_MS);
 }
 
 void initOLED() {
@@ -6268,8 +6261,7 @@ void initOLED() {
     "Starting system",
     "Please wait",
     "",
-    ""
-  );
+    "");
 
   Serial.println("OLED initialized.");
 #else
@@ -6296,8 +6288,7 @@ void calibrateTouch() {
     YETI_TOUCH_PIN_LABEL,
     "Do not touch pad",
     "Please wait",
-    ""
-  );
+    "");
 
   long total = 0;
   const int samples = 100;
@@ -6336,8 +6327,7 @@ void calibrateTouch() {
     YETI_TOUCH_PIN_LABEL,
     "",
     "",
-    ""
-  );
+    "");
 #endif
 }
 
@@ -6865,15 +6855,13 @@ void drawEye(int cx, int cy, int w, int h, float blinkAmount, bool leftEye) {
         x, y,
         x + actualW, y,
         x + actualW, y + closedH / 3,
-        bg
-      );
+        bg);
     } else {
       display.fillTriangle(
         x, y,
         x + actualW, y,
         x, y + closedH / 3,
-        bg
-      );
+        bg);
     }
 
     if (leftEye) {
@@ -10458,11 +10446,7 @@ void handleApiConfig() {
   weatherTickerShowPrecip = server.arg("weatherTickerPrecip") == "1";
   weatherTickerShowUpdated = server.arg("weatherTickerUpdated") == "1";
 
-  bool weatherChanged = oldWeatherEnabled != weatherEnabled ||
-                        oldWeatherName != weatherLocationName ||
-                        fabs(oldWeatherLat - weatherLatitude) > 0.0001f ||
-                        fabs(oldWeatherLon - weatherLongitude) > 0.0001f ||
-                        oldWeatherMetric != weatherMetric;
+  bool weatherChanged = oldWeatherEnabled != weatherEnabled || oldWeatherName != weatherLocationName || fabs(oldWeatherLat - weatherLatitude) > 0.0001f || fabs(oldWeatherLon - weatherLongitude) > 0.0001f || oldWeatherMetric != weatherMetric;
 
   clockEnabled = server.arg("clockEnabled") == "1";
   clock24h = server.arg("clock24h") == "1";
@@ -10839,7 +10823,7 @@ void handleApiSassRandom() {
     return;
   }
   applySassArgsFromRequest();
-  YetiPhraseCategory categories[] = {PHRASE_POKE, PHRASE_SHAKE, PHRASE_WIFI, PHRASE_WEATHER, PHRASE_IDLE, PHRASE_BOOT, PHRASE_FORGIVE, PHRASE_PRAISE, PHRASE_GRUDGE, PHRASE_NEEDS, PHRASE_JUDGMENT};
+  YetiPhraseCategory categories[] = { PHRASE_POKE, PHRASE_SHAKE, PHRASE_WIFI, PHRASE_WEATHER, PHRASE_IDLE, PHRASE_BOOT, PHRASE_FORGIVE, PHRASE_PRAISE, PHRASE_GRUDGE, PHRASE_NEEDS, PHRASE_JUDGMENT };
   YetiPhraseCategory category = categories[random(sizeof(categories) / sizeof(categories[0]))];
   bool ok = maybeShowMemoryPhrase(category, true);
   sendSassApiResponse(ok, ok ? "" : lastSassNote);
@@ -11139,8 +11123,7 @@ void handleApiAction() {
       String("Host: ") + configuredHostname + ".local",
       "SSID:",
       WiFi.status() == WL_CONNECTED ? clipText(WiFi.SSID(), 21) : clipText(setupApName, 21),
-      7000
-    );
+      7000);
     addEvent("OLED", "Displayed IP address");
     handleYetiEvent(EVENT_CUSTOM_MESSAGE);
   } else if (actionName == "weather_refresh") {
@@ -11251,13 +11234,9 @@ void handleSaveWifi() {
     clipText(ssid, 21),
     "Rebooting now",
     "Reconnect phone",
-    "to normal Wi-Fi"
-  );
+    "to normal Wi-Fi");
 
-  server.send(200, "text/html", htmlMessage(
-    "Wi-Fi Saved",
-    String("Credentials saved. Yeti is rebooting now. Try ") + hostnameLocalUrl() + " after it joins Wi-Fi, or check the OLED for the IP address."
-  ));
+  server.send(200, "text/html", htmlMessage("Wi-Fi Saved", String("Credentials saved. Yeti is rebooting now. Try ") + hostnameLocalUrl() + " after it joins Wi-Fi, or check the OLED for the IP address."));
 
   delay(1800);
   ESP.restart();
@@ -11277,13 +11256,9 @@ void handleForgetWifi() {
     "Rebooting into",
     "setup mode",
     "",
-    ""
-  );
+    "");
 
-  server.send(200, "text/html", htmlMessage(
-    "Wi-Fi Forgotten",
-    "Saved Wi-Fi credentials erased. Yeti is rebooting into setup mode."
-  ));
+  server.send(200, "text/html", htmlMessage("Wi-Fi Forgotten", "Saved Wi-Fi credentials erased. Yeti is rebooting into setup mode."));
 
   delay(1800);
   ESP.restart();
@@ -11393,8 +11368,7 @@ bool connectSavedWifi() {
     clipText(savedSsid, 21),
     "Please wait",
     "Timeout: 20 sec",
-    ""
-  );
+    "");
 
   setupMode = false;
 
@@ -11422,8 +11396,7 @@ bool connectSavedWifi() {
         clipText(savedSsid, 21),
         "Elapsed: " + String(elapsedSecond) + " sec",
         "Still trying",
-        ""
-      );
+        "");
     }
   }
 
@@ -11448,8 +11421,7 @@ bool connectSavedWifi() {
       "IP: " + WiFi.localIP().toString(),
       "Starting WebUI",
       String("Host: ") + configuredHostname + ".local",
-      ""
-    );
+      "");
 
     beginConfiguredMdns();
 
@@ -11467,8 +11439,7 @@ bool connectSavedWifi() {
     "Starting setup",
     "portal",
     "",
-    ""
-  );
+    "");
 
   WiFi.disconnect(true);
   delay(500);
@@ -11492,8 +11463,7 @@ void startSetupPortal() {
     setupApName,
     "IP: 192.168.4.1",
     String("Name: ") + configuredHostname,
-    "Open setup"
-  );
+    "Open setup");
 
   WiFi.mode(WIFI_AP_STA);
   WiFi.setSleep(false);  // Better captive portal responsiveness on ESP32-C3.
@@ -11519,8 +11489,7 @@ void startSetupPortal() {
       "setup hotspot",
       "Check Serial",
       "",
-      ""
-    );
+      "");
 
     return;
   }
@@ -11542,8 +11511,7 @@ void startSetupPortal() {
     setupApName,
     "IP: " + WiFi.softAPIP().toString(),
     "Portal loading",
-    "Web server next"
-  );
+    "Web server next");
 }
 
 // =====================================================
@@ -11663,20 +11631,20 @@ void handleSerial() {
       break;
 
     case 'i':
-    case 'I': {
-      String ipLine = WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString() : WiFi.softAPIP().toString();
-      showTemporaryOledStatus(
-        "Yeti Network",
-        WiFi.status() == WL_CONNECTED ? "Station mode" : "Setup/AP mode",
-        String("IP: ") + ipLine,
-        String("Host: ") + configuredHostname + ".local",
-        "SSID:",
-        WiFi.status() == WL_CONNECTED ? clipText(WiFi.SSID(), 21) : clipText(setupApName, 21),
-        7000
-      );
-      addEvent("OLED", "Displayed IP address");
-      break;
-    }
+    case 'I':
+      {
+        String ipLine = WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString() : WiFi.softAPIP().toString();
+        showTemporaryOledStatus(
+          "Yeti Network",
+          WiFi.status() == WL_CONNECTED ? "Station mode" : "Setup/AP mode",
+          String("IP: ") + ipLine,
+          String("Host: ") + configuredHostname + ".local",
+          "SSID:",
+          WiFi.status() == WL_CONNECTED ? clipText(WiFi.SSID(), 21) : clipText(setupApName, 21),
+          7000);
+        addEvent("OLED", "Displayed IP address");
+        break;
+      }
 
     case 't':
     case 'T':
@@ -11826,8 +11794,7 @@ void loop() {
         "Please wait",
         "",
         "",
-        ""
-      );
+        "");
 
       WiFi.disconnect();
       WiFi.setHostname(configuredHostname.c_str());

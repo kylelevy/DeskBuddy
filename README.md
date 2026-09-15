@@ -1043,3 +1043,133 @@ MIT License
 **YETI:** small screen, big attitude.
 
 </div>
+
+---
+
+# Python API client
+
+This repository also contains `yeti-firmware-client`, a small, typed, object-oriented Python interface for controlling a YETI over its local HTTP API. It is intentionally separate from the Arduino firmware: the client does not require an ESP32 toolchain and can be used from a laptop, home-automation service, or scheduled script.
+
+## Requirements and setup
+
+- Python 3.10 or newer
+- [`uv`](https://docs.astral.sh/uv/)
+- A YETI joined to the same Wi-Fi network as the computer
+
+Create the virtual environment and install locked dependencies with:
+
+```bash
+uv sync
+```
+
+Run the automated tests:
+
+```bash
+uv run pytest
+uv run ruff check .
+```
+
+The default target is `http://yeti.local`. Use an IP address when mDNS is unavailable:
+
+```python
+from yeti_client import YetiClient
+
+with YetiClient("http://192.168.1.42") as yeti:
+    print(yeti.status()["mood"]["currentMoodLabel"])
+```
+
+## Client design
+
+`YetiClient` owns an `httpx.Client`, reuses connections, converts Python values to the URL-encoded form fields expected by the ESP32 `WebServer`, and turns firmware errors into useful exceptions. Use it as a context manager or call `close()` explicitly.
+
+```python
+from yeti_client import YetiClient, YetiAPIError, YetiConnectionError
+
+try:
+    with YetiClient(timeout=8) as yeti:
+        status = yeti.status()
+        print(status["wifi"]["ip"])
+        yeti.set_mood("happy", duration_ms=10_000)
+        yeti.apply_personality("friendly")
+        yeti.action("show_clock")
+except YetiAPIError as error:
+    print(error.status_code, error.payload)
+except YetiConnectionError as error:
+    print(f"Device unavailable: {error}")
+```
+
+The methods are grouped by firmware capability:
+
+| Python method | Firmware operation |
+|---|---|
+| `status()` | Full `/api/status` document |
+| `scan_wifi()` | Wi-Fi scan, returning `WifiNetwork` objects |
+| `scan_i2c()` | I2C scan, returning `I2CDevice` objects |
+| `mood()`, `set_mood()`, `set_base_mood()`, `random_mood()` | Read and set mood |
+| `poke()`, `calm()` | Personality interactions |
+| `idle_mood_now()`, `weather_mood_now()`, `wifi_mood_now()`, `movement_mood_now()` | Run configured reactions immediately |
+| `apply_personality(name)` | Apply `classic`, `friendly`, `sleepy`, `feral`, or `weather` presets |
+| `memory()`, `save_memory(**fields)`, `memory_action(name)` | Read, save, or update memory/grudges/needs |
+| `sass(kind)` | Trigger `test`, `judgment`, `grievance`, `random`, or `clear` |
+| `sequence(name)`, `stop_sequence()` | Start/stop acting sequences |
+| `action(name)` | Sleep, wake, reboot, clock/weather, face, and sensor actions |
+| `update_config(**settings)` | Save runtime settings; booleans become `1`/`0` |
+
+All successful methods return the decoded JSON response as a Python `dict`, except scans, which return model objects. The full response remains available, so new firmware fields do not require an immediate client release.
+
+### Configuration example
+
+The firmware accepts the form names below. Only send fields you want to change; `update_config` preserves the same names used by the WebUI:
+
+```python
+with YetiClient() as yeti:
+    yeti.update_config(
+        hostname="yeti-office",
+        faceFrameMs=100,
+        baseMood="deadpan",
+        idleMoodEnabled=True,
+        weatherEnabled=False,
+        clockEnabled=True,
+        clock24h=True,
+        clockOffsetMinutes=-420,
+        sleepEnabled=True,
+        sleepStartTime="21:00",
+        sleepEndTime="06:00",
+    )
+```
+
+Useful action names include `sleep_now`, `sleep_preview`, `wake_now`, `normal`, `angry`, `sleepy`, `happy`, `surprised`, `shocked`, `blink`, `random`, `poke`, `calm`, `demo`, `show_ip`, `weather_refresh`, `sync_clock`, `show_weather`, `show_clock`, `trigger_shake`, and `trigger_touch`. `reboot` is also supported, but the device intentionally becomes unreachable immediately afterward.
+
+## Example scripts
+
+Runnable examples live in [`examples/`](examples/), separate from the importable package:
+
+```bash
+uv run python examples/read_status.py
+uv run python examples/health_check.py
+uv run python examples/interactive_demo.py
+uv run python examples/diagnostics.py
+uv run python examples/configure_yeti.py
+uv run python examples/memory_interactions.py
+```
+
+Set a different target without editing the examples by constructing `YetiClient(os.environ.get("YETI_HOST", "yeti.local"))` in your own script. The examples are deliberately conservative; diagnostics may take several seconds because the firmware performs a real radio/I2C scan.
+
+## Testing strategy
+
+The client tests use `httpx.MockTransport`, so `uv run pytest` is safe when no YETI is connected. They verify form encoding, response models, firmware error handling, and boolean configuration conversion. Live testing is separate because commands such as mood, reboot, and scans affect the physical device.
+
+To perform a read-only live smoke test on Wi-Fi:
+
+```bash
+uv run python - <<'PY'
+from yeti_client import YetiClient
+
+with YetiClient("yeti.local", timeout=8) as yeti:
+    status = yeti.status()
+    print(status["app"])
+    print(status["wifi"])
+PY
+```
+
+The API has no authentication. Keep YETI on a trusted LAN and never expose the HTTP port to the public internet. mDNS can fail because of VPNs, firewalls, or router isolation; use the device IP as a fallback.
