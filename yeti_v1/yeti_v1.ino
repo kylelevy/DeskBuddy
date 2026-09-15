@@ -14,6 +14,11 @@
 #include <Adafruit_SSD1306.h>
 
 // =====================================================
+
+// YETI v.1 - The baseline of the new age of Kyle
+
+// NEW ERA!
+
 // YETI v1.7.4-sleep-preview-compile-fix
 // ESP32 OLED face + Wi-Fi setup + WebUI + MPU shake + touch
 //
@@ -8267,7 +8272,7 @@ const char DASHBOARD_HTML[] PROGMEM = R"HTML(<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Yeti v1.7.1</title>
+<title>Yeti v1</title>
 <style>
 :root {
 --bg: #071019;
@@ -8640,7 +8645,7 @@ header, main { padding: 16px; }
 <header>
 <div class="title-row">
 <div>
-<h1>Yeti v1.7.4</h1>
+<h1>Yeti v1</h1>
 <div class="subtitle">OLED face controller with the full memory/grudge checkpoint, cleaned-up mobile accordions, sass ticker, and scheduled sleep mode for the tiny battery goblin.</div>
 </div>
 <div class="pill">
@@ -11520,7 +11525,7 @@ void startSetupPortal() {
 
 void printHelp() {
   Serial.println();
-  Serial.println("Yeti v1.7.4 Serial Commands:");
+  Serial.println("Yeti v1 Serial Commands:");
   Serial.println("  n = deadpan mood");
   Serial.println("  a = angry mood");
   Serial.println("  s = sleepy mood");
@@ -11676,7 +11681,7 @@ void setup() {
   delay(1000);
 
   Serial.println();
-  Serial.println("Yeti v1.7.4-sleep-preview-compile-fix");
+  Serial.println("Yeti v1 - New Era");
   Serial.println("Starting firmware...");
   addEvent("Boot", "Firmware started");
 

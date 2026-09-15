@@ -1,6 +1,6 @@
 # YETI hardware wiring guide
 
-This guide matches the pin assignments used by `yeti_v1_7_4/yeti_v1_7_4.ino`. YETI uses one I²C bus for the SSD1306 OLED and the MPU6050/MPU6500 motion sensor, so the two devices share SDA, SCL, power, and ground.
+This guide matches the pin assignments used by `yeti_v1/yeti_v1.ino`. YETI uses one I²C bus for the SSD1306 OLED and the MPU6050/MPU6500 motion sensor, so the two devices share SDA, SCL, power, and ground.
 
 ## Parts
 

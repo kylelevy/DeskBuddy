@@ -1,6 +1,6 @@
 # YETI firmware architecture guide
 
-This document explains the firmware in `yeti_v1_7_4/yeti_v1_7_4.ino` for developers who need to understand, debug, or extend the device. It describes the code as it exists today: a single Arduino `.ino` translation unit containing the hardware drivers, behavior engines, HTTP server, embedded WebUI, persistence, and main scheduler.
+This document explains the firmware in `yeti_v1/yeti_v1.ino` for developers who need to understand, debug, or extend the device. It describes the code as it exists today: a single Arduino `.ino` translation unit containing the hardware drivers, behavior engines, HTTP server, embedded WebUI, persistence, and main scheduler.
 
 The short version is:
 
