@@ -55,6 +55,7 @@ This project is currently centered around an **ESP32-C3 Super Mini** style board
 - [API overview](#api-overview)
 - [Troubleshooting](#troubleshooting)
 - [Security notes](#security-notes)
+- [Python API client](#python-api-client)
 - [Roadmap ideas](#roadmap-ideas)
 - [License](#license)
 
@@ -1048,7 +1049,7 @@ MIT License
 
 # Python API client
 
-This repository also contains `yeti-firmware-client`, a small, typed, object-oriented Python interface for controlling a YETI over its local HTTP API. It is intentionally separate from the Arduino firmware: the client does not require an ESP32 toolchain and can be used from a laptop, home-automation service, or scheduled script.
+This repository also contains `yeti-firmware-client`, a small, typed, object-oriented Python interface for controlling a YETI over its local HTTP API. See the [Python firmware API guide](docs/python-api.md) for the concise method and error reference. It is intentionally separate from the Arduino firmware: the client does not require an ESP32 toolchain and can be used from a laptop, home-automation service, or scheduled script.
 
 ## Requirements and setup
 
