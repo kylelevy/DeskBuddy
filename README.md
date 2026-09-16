@@ -6,6 +6,8 @@ Version 2 replaces the former monolithic V1 sketch with modular firmware, a loca
 
 The primary target is an ESP32-C3 Super Mini. A classic ESP32 GPIO21/GPIO22 fallback profile is also present in `deskbuddy/config.h`.
 
+<img width="4032" height="3024" alt="deskbuddy-face" src="https://github.com/user-attachments/assets/aab60063-88a4-4a92-8115-cbcea066142f" />
+
 ## Features
 
 - RoboEyes face with a small automatic animation playlist
