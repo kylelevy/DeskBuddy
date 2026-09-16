@@ -1,13 +1,7 @@
-"""Demonstrate YETI's memory interactions without changing configuration."""
-
+"""Send a temporary state to DeskBuddy."""
 import os
 
-from yeti_client import YetiClient
+from deskbuddy_client import DeskBuddyClient
 
-host = os.environ.get("YETI_HOST", "yeti.local")
-with YetiClient(host) as yeti:
-    before = yeti.memory()
-    print("Relationship before:", before.get("relationship"))
-    result = yeti.memory_action("praise")
-    print("Praise response:", result.get("memory", result))
-    print("Use memory_action('forgive') or memory_action('annoy') for other interactions.")
+with DeskBuddyClient(os.environ.get("DESKBUDDY_HOST", "deskbuddy.local")) as buddy:
+    print(buddy.set_state("happy", duration_ms=5000))
