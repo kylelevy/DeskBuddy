@@ -20,17 +20,29 @@ Preferences displayPrefs;
 
 void drawClock() {
   DeskBuddyUI::header("CLOCK");
-  DeskBuddyUI::icon("clock", 5, 17);
   struct tm timeinfo;
+  screen->setTextColor(SSD1306_WHITE);
   if (!getLocalTime(&timeinfo, 20)) {
-    screen->setCursor(26, 23); screen->setTextSize(1); screen->setTextColor(SSD1306_WHITE); screen->print("Waiting for NTP");
-    screen->setCursor(26, 36); screen->print("Connect to Wi-Fi");
+    screen->setTextSize(1);
+    screen->setCursor(32, 24); screen->print("Waiting for NTP");
+    screen->setCursor(29, 37); screen->print("Connect to Wi-Fi");
     screen->drawLine(0, 55, 127, 55, SSD1306_WHITE);
     return;
   }
-  char timeText[12]; char dateText[20]; strftime(timeText, sizeof(timeText), "%H:%M", &timeinfo); strftime(dateText, sizeof(dateText), "%a %d %b", &timeinfo);
-  screen->setTextColor(SSD1306_WHITE); screen->setTextSize(2); screen->setCursor(25, 15); screen->print(timeText);
-  screen->setTextSize(1); screen->setCursor(4, 40); screen->print(dateText);
+  char timeText[12]; char dateText[20];
+  strftime(timeText, sizeof(timeText), "%H:%M", &timeinfo);
+  strftime(dateText, sizeof(dateText), "%a %d %b", &timeinfo);
+
+  int16_t x, y; uint16_t width, height;
+  screen->setTextSize(3);
+  screen->getTextBounds(timeText, 0, 0, &x, &y, &width, &height);
+  screen->setCursor((DESKBUDDY_WIDTH - width) / 2, 14);
+  screen->print(timeText);
+
+  screen->setTextSize(1);
+  screen->getTextBounds(dateText, 0, 0, &x, &y, &width, &height);
+  screen->setCursor((DESKBUDDY_WIDTH - width) / 2, 45);
+  screen->print(dateText);
   screen->drawLine(0, 55, 127, 55, SSD1306_WHITE);
 }
 void drawWeather() {
