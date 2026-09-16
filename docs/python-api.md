@@ -1,6 +1,6 @@
-# DeskBuddy Python and REST API
+# DeskBuddy Version 2.0.0 Python and REST API
 
-`deskbuddy_client` is a small `httpx` wrapper around the DeskBuddy ESP32 JSON API. It is intended for scripts, background services, webhook handlers, and local automation.
+`deskbuddy_client` is the Version 2.0.0 Python client for the DeskBuddy ESP32 JSON API. It is a small `httpx` wrapper intended for scripts, background services, webhook handlers, and local automation. The firmware reports the same `2.0.0` version through its health and status endpoints.
 
 The API has no authentication. Use it only on a trusted LAN. The setup AP is open by default.
 

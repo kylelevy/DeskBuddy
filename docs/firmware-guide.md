@@ -1,6 +1,8 @@
-# DeskBuddy firmware guide
+# DeskBuddy Version 2.0.0 firmware guide
 
-DeskBuddy is a small Arduino firmware for the ESP32-C3 and a 128×64 I²C OLED. It renders a RoboEyes face, exposes a local JSON API, manages Wi-Fi provisioning, and periodically provides clock and weather screens.
+DeskBuddy Version 2.0.0 is a small Arduino firmware for the ESP32-C3 and a 128×64 I²C OLED. It renders a RoboEyes face, exposes a local JSON API, manages Wi-Fi provisioning, and periodically provides clock and weather screens.
+
+Version 2 is the modular firmware release; the former monolithic V1 sketch is no longer maintained. See the repository [`CHANGELOG.md`](../CHANGELOG.md) for the release summary.
 
 For the detailed implementation model, scheduling diagrams, persistence map, state ownership, and Mermaid figures, see [`firmware-logic.md`](firmware-logic.md).
 

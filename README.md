@@ -1,6 +1,8 @@
-# DeskBuddy
+# DeskBuddy — Version 2.0.0
 
-DeskBuddy is a lightweight ESP32 desktop companion with a 128×64 monochrome OLED, cheerful RoboEyes animations, compact status screens, Wi-Fi provisioning, clock/weather widgets, and a small JSON REST API.
+DeskBuddy Version 2.0.0 is a lightweight ESP32 desktop companion with a 128×64 monochrome OLED, cheerful RoboEyes animations, compact status screens, Wi-Fi provisioning, clock/weather widgets, and a small JSON REST API.
+
+Version 2 replaces the former monolithic V1 sketch with modular firmware, a local Web UI and REST API, and a Python client for automation. See [`CHANGELOG.md`](CHANGELOG.md) for the complete release summary.
 
 The primary target is an ESP32-C3 Super Mini. A classic ESP32 GPIO21/GPIO22 fallback profile is also present in `deskbuddy/config.h`.
 
@@ -154,4 +156,6 @@ Run checks with:
 
 ## License
 
-See [`LICENSE`](LICENSE).
+DeskBuddy is free to use, inspect, modify, and share for noncommercial purposes under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0). Commercial use, including selling the software or products primarily based on it, is not permitted without a separate license from the copyright holder. See [`LICENSE`](LICENSE) for the complete terms.
+
+Because the license restricts commercial use, it is source-available rather than formally Open Source Initiative (OSI)-approved open source. This restriction is intentional so the community can collaborate without the project being commercialized or sold.
