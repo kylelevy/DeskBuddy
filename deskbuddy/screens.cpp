@@ -16,12 +16,26 @@ uint32_t lastWeatherCard = 0;
 uint32_t lastFrame = 0;
 
 void drawClock() {
-  struct tm timeinfo; if (!getLocalTime(&timeinfo, 20)) { DeskBuddyUI::card("CLOCK", "Waiting for NTP", "Connect to Wi-Fi"); return; }
+  DeskBuddyUI::header("CLOCK");
+  DeskBuddyUI::icon("clock", 5, 17);
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo, 20)) {
+    screen->setCursor(26, 23); screen->setTextSize(1); screen->setTextColor(SSD1306_WHITE); screen->print("Waiting for NTP");
+    screen->setCursor(26, 36); screen->print("Connect to Wi-Fi");
+    screen->drawLine(0, 55, 127, 55, SSD1306_WHITE);
+    return;
+  }
   char timeText[12]; char dateText[20]; strftime(timeText, sizeof(timeText), "%H:%M", &timeinfo); strftime(dateText, sizeof(dateText), "%a %d %b", &timeinfo);
-  DeskBuddyUI::card("CLOCK", timeText, dateText);
+  screen->setTextColor(SSD1306_WHITE); screen->setTextSize(2); screen->setCursor(25, 15); screen->print(timeText);
+  screen->setTextSize(1); screen->setCursor(4, 40); screen->print(dateText);
+  screen->drawLine(0, 55, 127, 55, SSD1306_WHITE);
 }
 void drawWeather() {
-  if (!DeskBuddyWeather::available()) { DeskBuddyUI::card("WEATHER", "Unavailable", DeskBuddyWeather::error().c_str()); return; }
+  if (!DeskBuddyWeather::available()) {
+    DeskBuddyUI::header("WEATHER"); DeskBuddyUI::icon("weather", 5, 17);
+    screen->setTextColor(SSD1306_WHITE); screen->setTextSize(1); screen->setCursor(25, 22); screen->print("Unavailable");
+    screen->setCursor(25, 36); screen->print(DeskBuddyWeather::error()); screen->drawLine(0, 55, 127, 55, SSD1306_WHITE); return;
+  }
   DeskBuddyUI::header("WEATHER");
   DeskBuddyUI::icon("weather", 5, 17);
   screen->setTextColor(SSD1306_WHITE);
@@ -62,7 +76,12 @@ void drawStatus(const char *title, const char *line) {
     status = connected ? "Connected" : (DeskBuddyNetwork::setupMode() ? "Pairing mode" : "Connecting...");
   }
   String address = connected ? WiFi.localIP().toString() : (DeskBuddyNetwork::setupMode() ? "AP: 192.168.4.1" : "Waiting for Wi-Fi");
-  DeskBuddyUI::card(title, status, address.c_str());
+  String iconName = String(title) == "WI-FI" ? "wifi" : (String(title) == "PAIRING" ? "wifi" : "warning");
+  DeskBuddyUI::header(title);
+  DeskBuddyUI::icon(iconName, 5, 17);
+  screen->setTextColor(SSD1306_WHITE); screen->setTextSize(1); screen->setCursor(25, 22); screen->print(status);
+  screen->setCursor(25, 36); screen->print(address);
+  screen->drawLine(0, 55, 127, 55, SSD1306_WHITE);
 }
 }
 namespace DeskBuddyScreens {

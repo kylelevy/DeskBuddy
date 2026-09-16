@@ -242,7 +242,7 @@ The firmware requests current temperature, WMO weather code, precipitation amoun
 18.0°C · Cloudy · Rain 20% · Wind 12 km/h
 ```
 
-The OLED weather screen shows the weather icon, temperature, condition, rain probability/amount, and wind speed. Weather availability is runtime-only and resets after reboot or Wi-Fi loss. A refresh request is asynchronous. The Web UI and API should be used to configure the location before refreshing.
+The OLED weather screen shows the weather icon, temperature, condition, rain probability/amount, and wind speed. Clock screens show a clock glyph and larger time typography. Wi-Fi, pairing, and error screens use their corresponding status glyphs. Weather availability is runtime-only and resets after reboot or Wi-Fi loss. A refresh request is asynchronous. The Web UI and API should be used to configure the location before refreshing.
 
 ## 10. API routing and event ownership
 
