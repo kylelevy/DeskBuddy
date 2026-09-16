@@ -44,7 +44,7 @@ String weatherDescription(int code) {
 }
 }
 namespace DeskBuddyWeather {
-void begin() { prefs.begin("desk_weather", false); location = prefs.getString("location", ""); prefs.end(); }
+void begin() { prefs.begin("desk_weather", false); location = prefs.getString("location", ""); prefs.end(); forceRefresh = true; }
 void requestRefresh() { forceRefresh = true; }
 void update(uint32_t now) {
   if (WiFi.status() != WL_CONNECTED || location.length() == 0) { weatherReady = false; weatherError = location.length() ? "Wi-Fi offline" : "Set location"; return; }

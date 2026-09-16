@@ -82,7 +82,7 @@ The AP is open by default because `DESKBUDDY_SETUP_AP_PASSWORD` is empty. The no
 
 The clock stores a UTC offset in the `desk_time` namespace. The range is −12 hours through +14 hours. NTP starts after the first successful Wi-Fi connection using public pools. The clock screen displays local 24-hour time and date, or `Waiting for NTP` until synchronization is available.
 
-Weather stores a `latitude,longitude` string in the `desk_weather` namespace. The Web UI accepts values such as `45.52,-122.67`. Values are validated when refresh runs. Open-Meteo is queried over HTTPS using `setInsecure()`, so certificate verification is disabled. The current summary includes temperature in °C, a friendly WMO condition, precipitation probability/amount, and wind speed. Weather availability is runtime-only and resets after reboot or Wi-Fi loss.
+Weather stores a `latitude,longitude` string in the `desk_weather` namespace and requests an initial cache refresh at boot, waiting until Wi-Fi is connected. The Web UI accepts values such as `45.52,-122.67`. Values are validated when refresh runs. Open-Meteo is queried over HTTPS using `setInsecure()`, so certificate verification is disabled. The current summary includes temperature in °C, a friendly WMO condition, precipitation probability/amount, and wind speed. Weather availability is runtime-only and resets after reboot or Wi-Fi loss.
 
 ## Build and upload
 
