@@ -156,7 +156,7 @@ stateDiagram-v2
 - Static screens clear the shared framebuffer before drawing.
 - Static screens call `display.display()` after drawing.
 - RoboEyes owns face drawing and clears/flushes its own face frame.
-- Frames are rate-limited to approximately 12 FPS by `DESKBUDDY_OLED_FRAME_MS`.
+- Frames are rate-limited by the persisted display frame-rate setting (default 12 FPS, configurable from 1–30 FPS through the Web UI or `/api/config`).
 - The full SSD1306 framebuffer is about 1 KB.
 
 ```mermaid

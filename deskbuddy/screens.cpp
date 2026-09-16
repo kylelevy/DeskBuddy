@@ -1,5 +1,6 @@
 #include "screens.h"
 #include "animations.h"
+#include <Preferences.h>
 #include "config.h"
 #include "network.h"
 #include "state.h"
@@ -14,6 +15,8 @@ uint32_t lastFlush = 0;
 uint32_t lastClockCard = 0;
 uint32_t lastWeatherCard = 0;
 uint32_t lastFrame = 0;
+uint8_t displayFrameRate = DESKBUDDY_DEFAULT_FRAME_RATE;
+Preferences displayPrefs;
 
 void drawClock() {
   DeskBuddyUI::header("CLOCK");
@@ -85,9 +88,24 @@ void drawStatus(const char *title, const char *line) {
 }
 }
 namespace DeskBuddyScreens {
-void begin(Adafruit_SSD1306 &display) { screen = &display; DeskBuddyUI::begin(&display); }
+void begin(Adafruit_SSD1306 &display) {
+  screen = &display;
+  DeskBuddyUI::begin(&display);
+  displayPrefs.begin("desk_display", false);
+  displayFrameRate = constrain(displayPrefs.getUChar("frame_rate", DESKBUDDY_DEFAULT_FRAME_RATE), DESKBUDDY_MIN_FRAME_RATE, DESKBUDDY_MAX_FRAME_RATE);
+  displayPrefs.end();
+}
+void setFrameRate(uint8_t framesPerSecond) {
+  displayFrameRate = constrain(framesPerSecond, DESKBUDDY_MIN_FRAME_RATE, DESKBUDDY_MAX_FRAME_RATE);
+  lastFrame = 0;
+  displayPrefs.begin("desk_display", false);
+  displayPrefs.putUChar("frame_rate", displayFrameRate);
+  displayPrefs.end();
+}
+uint8_t frameRate() { return displayFrameRate; }
 void update(uint32_t now) {
-  if (!screen || now - lastFrame < DESKBUDDY_OLED_FRAME_MS) return; lastFrame = now;
+  const uint32_t frameInterval = 1000UL / displayFrameRate;
+  if (!screen || now - lastFrame < frameInterval) return; lastFrame = now;
   const String &activeScreen = DeskBuddyState::activeScreen();
   // Static screens share the OLED framebuffer, so discard the previous screen
   // before drawing. RoboEyes clears its own frame in drawEyes().

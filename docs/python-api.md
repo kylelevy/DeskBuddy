@@ -73,6 +73,9 @@ The response contains:
   },
   "clock": {
     "utc_offset_minutes": -420
+  },
+  "display": {
+    "frame_rate": 12
   }
 }
 ```
@@ -181,12 +184,14 @@ Recognized fields are:
 ```json
 {
   "weather_location": "45.52,-122.67",
-  "utc_offset_minutes": -420
+  "utc_offset_minutes": -420,
+  "frame_rate": 15
 }
 ```
 
 - `weather_location` is stored in the `desk_weather` Preferences namespace. It is checked when a refresh runs and must contain valid latitude/longitude values.
 - `utc_offset_minutes` is persisted in `desk_time` and clamped to −720 through +840.
+- `frame_rate` is persisted in `desk_display` and clamped to 1 through 30 FPS; the default is 12 FPS.
 - A successful weather cache summary includes temperature in °C, a friendly condition, rain probability/amount, and wind speed, for example `18.0°C · Cloudy · Rain 20% · Wind 12 km/h`.
 - Unknown fields are silently ignored by the firmware.
 
@@ -206,6 +211,7 @@ Python:
 buddy.update_config(
     weather_location="45.52,-122.67",
     utc_offset_minutes=-420,
+    frame_rate=15,
 )
 buddy.refresh_weather()
 ```
