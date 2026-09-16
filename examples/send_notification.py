@@ -1,21 +1,14 @@
-"""Send a custom scrolling notification: ``uv run python examples/send_notification.py``."""
-
+"""Send a DeskBuddy notification."""
 import argparse
 import os
 
-from yeti_client import YetiClient
+from deskbuddy_client import DeskBuddyClient
 
-parser = argparse.ArgumentParser(description="Send a custom notification to YETI")
-parser.add_argument("title", nargs="?", default="YETI notification")
-parser.add_argument(
-    "body",
-    nargs="?",
-    default="Hello from the custom notification API over Wi-Fi.",
-)
-parser.add_argument("--host", default=os.environ.get("YETI_HOST", "yeti.local"))
+parser = argparse.ArgumentParser(description="Send a notification to DeskBuddy")
+parser.add_argument("title", nargs="?", default="DeskBuddy notification")
+parser.add_argument("body", nargs="?", default="Hello from Python")
+parser.add_argument("--icon", default="info")
+parser.add_argument("--host", default=os.environ.get("DESKBUDDY_HOST", "deskbuddy.local"))
 args = parser.parse_args()
-
-with YetiClient(args.host) as yeti:
-    result = yeti.notify(args.title, args.body)
-
-print(f"Notification sent to {args.host} for approximately {result['durationMs']} ms.")
+with DeskBuddyClient(args.host) as buddy:
+    print(buddy.notify(args.title, args.body, icon=args.icon))

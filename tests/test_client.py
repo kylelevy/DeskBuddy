@@ -3,103 +3,68 @@ import json
 import httpx
 import pytest
 
-from yeti_client import YetiAPIError, YetiClient
-from yeti_client.models import I2CDevice, WifiNetwork
+from deskbuddy_client import DeskBuddyAPIError, DeskBuddyClient
 
 
 def make_client(handler):
-    return YetiClient(client=httpx.Client(transport=httpx.MockTransport(handler), base_url="http://yeti.local"))
+    return DeskBuddyClient(client=httpx.Client(transport=httpx.MockTransport(handler), base_url="http://deskbuddy.local"))
 
-
-def test_status_and_form_encoding():
+def test_status_and_health():
     def handler(request):
-        assert request.url.path == "/api/mood"
-        assert request.method == "POST"
-        assert request.content == b"mood=happy&durationMs=2500"
-        return httpx.Response(200, json={"ok": True, "mood": {"currentMood": "happy"}})
+        assert request.url.path in {"/api/status", "/api/health"}
+        return httpx.Response(200, json={"ok": True, "name": "DeskBuddy"})
+    with make_client(handler) as buddy:
+        assert buddy.health()["name"] == "DeskBuddy"
+        assert buddy.status()["ok"] is True
 
-    with make_client(handler) as yeti:
-        assert yeti.set_mood("happy", 2500)["mood"]["currentMood"] == "happy"
-
-
-def test_custom_notification_uses_json_payload():
+def test_notification_payload_includes_icon():
     def handler(request):
         assert request.url.path == "/api/notification"
-        assert request.method == "POST"
         assert request.headers["content-type"] == "application/json"
-        assert json.loads(request.content) == {"title": "Hello", "body": "A long message"}
-        return httpx.Response(200, json={"ok": True, "durationMs": 2500})
+        assert json.loads(request.content) == {
+            "title": "Hello",
+            "body": "A message",
+            "icon": "github",
+            "duration_ms": 7000,
+        }
+        return httpx.Response(200, json={"ok": True})
+    with make_client(handler) as buddy:
+        assert buddy.notify("Hello", "A message", icon="github", duration_ms=7000)["ok"]
 
-    with make_client(handler) as yeti:
-        assert yeti.notify("Hello", "A long message")["durationMs"] == 2500
-
-
-def test_models_from_device_endpoints():
+def test_controls_use_json_routes():
+    paths = []
     def handler(request):
-        if request.url.path == "/api/scan":
-            return httpx.Response(
-                200,
-                json=[
-                    {
-                        "ssid": "lab",
-                        "rssi": -42,
-                        "channel": 6,
-                        "encryption": "WPA2",
-                        "bssid": "aa",
-                    }
-                ],
-            )
-        return httpx.Response(200, json=[{"address": "0x3c", "decimal": 60, "likely": "OLED"}])
-
-    with make_client(handler) as yeti:
-        assert yeti.scan_wifi() == [WifiNetwork("lab", -42, 6, "WPA2", "aa")]
-        assert yeti.scan_i2c() == [I2CDevice("0x3c", 60, "OLED")]
-
+        paths.append(request.url.path)
+        assert request.headers["content-type"] == "application/json"
+        return httpx.Response(200, json={"ok": True})
+    with make_client(handler) as buddy:
+        buddy.set_state("happy", duration_ms=2000)
+        buddy.set_base_state("cheerful")
+        buddy.play_animation("blink")
+        buddy.show_screen("clock")
+        buddy.refresh_weather()
+        buddy.action("pairing")
+    assert paths == [
+        "/api/state",
+        "/api/state/base",
+        "/api/animation",
+        "/api/screen",
+        "/api/weather/refresh",
+        "/api/action",
+    ]
 
 def test_api_error_contains_payload():
     def handler(request):
-        return httpx.Response(400, json={"ok": False, "error": "unknown_mood"})
-
-    with make_client(handler) as yeti:
-        with pytest.raises(YetiAPIError) as caught:
-            yeti.set_mood("nope")
+        return httpx.Response(400, json={"ok": False, "error": "unknown_animation"})
+    with make_client(handler) as buddy:
+        with pytest.raises(DeskBuddyAPIError) as caught:
+            buddy.play_animation("nope")
     assert caught.value.status_code == 400
-    assert caught.value.payload["error"] == "unknown_mood"
+    assert caught.value.payload["error"] == "unknown_animation"
 
-
-def test_boolean_config_fields_use_firmware_values():
+def test_config_payload():
     def handler(request):
-        assert request.content == b"clockEnabled=1&sleepEnabled=0"
+        assert json.loads(request.content) == {"weather_location": "45.5,-122.6"}
         return httpx.Response(200, json={"ok": True})
-
-    with make_client(handler) as yeti:
-        yeti.update_config(clockEnabled=True, sleepEnabled=False)
-
-
-def test_memory_action_validates_name():
-    with make_client(lambda request: httpx.Response(200, json={"ok": True})) as yeti:
-        with pytest.raises(ValueError):
-            yeti.memory_action("delete-everything")
-
-
-def test_reaction_and_memory_helpers_use_firmware_routes():
-    paths = []
-
-    def handler(request):
-        paths.append(request.url.path)
-        return httpx.Response(200, json={"ok": True})
-
-    with make_client(handler) as yeti:
-        yeti.idle_mood_now()
-        yeti.weather_mood_now()
-        yeti.wifi_mood_now()
-        yeti.movement_mood_now()
-        yeti.save_memory(memoryEnabled=True)
-
-    assert paths == [
-        "/api/mood/idle-now",
-        "/api/mood/weather-now",
-        "/api/mood/wifi-now",
-        "/api/mood/movement-now",
-        "/api/memory/save",
-    ]
+    with make_client(handler) as buddy:
+        buddy.update_config(weather_location="45.5,-122.6")
